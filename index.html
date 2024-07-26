@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Photo Carousel with Adjustable Speed</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #333;
+            overflow: hidden;
+        }
+        .carousel {
+            position: relative;
+            width: 600px; /* Container size */
+            height: 600px; /* Container size */
+            perspective: 1000px;
+        }
+        .carousel-images {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            transform: rotateY(0deg);
+            transition: transform 0.5s ease;
+        }
+        .carousel-images div {
+            position: absolute;
+            width: 300px; /* Width of each image */
+            height: 300px; /* Height of each image */
+            background-color: transparent;
+            top: 50%;
+            left: 50%;
+            margin: -100px 0 0 -100px; /* Center the images */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .carousel-images .front  { transform: rotateY(0deg) translateZ(350px); }
+        .carousel-images .back   { transform: rotateY(60deg) translateZ(350px); }
+        .carousel-images .left   { transform: rotateY(120deg) translateZ(350px); }
+        .carousel-images .right  { transform: rotateY(180deg) translateZ(350px); }
+        .carousel-images .top    { transform: rotateY(240deg) translateZ(350px); }
+        .carousel-images .bottom { transform: rotateY(300deg) translateZ(350px); }
+        .carousel-images img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            backface-visibility: hidden;
+        }
+        .controls {
+            margin-top: 50px;
+            text-align: center;
+        }
+        input[type="range"] {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel">
+        <div class="carousel-images">
+            <div class="front"><img src="1.jpg" alt="Front Image"></div>
+            <div class="back"><img src="2.jpg" alt="Back Image"></div>
+            <div class="left"><img src="3.jpg" alt="Left Image"></div>
+            <div class="right"><img src="4.jpg" alt="Right Image"></div>
+            <div class="top"><img src="5.jpg" alt="Top Image"></div>
+            <div class="bottom"><img src="6.jpg" alt="Bottom Image"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <label for="speed">转动速度: </label>
+        <input type="range" id="speed" min="0.1" max="10" step="0.1" value="1">
+        <span id="speedValue">1</span> RPM
+    </div>
+
+    <script>
+        const carouselImages = document.querySelector('.carousel-images');
+        const speedInput = document.getElementById('speed');
+        const speedValue = document.getElementById('speedValue');
+
+        let angle = 0;
+        let rotationSpeed = parseFloat(speedInput.value); // Speed in RPM
+
+        function updateRotation() {
+            const rotationSpeedDeg = rotationSpeed * 360 / 60; // Convert RPM to degrees per second
+            angle += rotationSpeedDeg / 60; // Increment angle based on rotation speed
+            carouselImages.style.transform = `rotateY(${angle}deg)`; // Fix template string usage
+            requestAnimationFrame(updateRotation); // Continue animation
+        }
+
+        speedInput.addEventListener('input', (e) => {
+            rotationSpeed = parseFloat(e.target.value);
+            speedValue.textContent = rotationSpeed.toFixed(1);
+        });
+
+        updateRotation(); // Start the rotation animation
+    </script>
+</body>
+</html>
